@@ -4,6 +4,28 @@ fetch("../routeData.json")
 })
 .then(jsondata => console.log(jsondata));
 
+function calculateAngle(x, y) {
+  return Math.atan2(y, x) * 180 / Math.PI;
+}
+
+function setRotation(cone, entity) {
+  if(cone != null) {
+    alert("cone was not null :)");
+    let conePosition = cone.getAttribute('gps-projected-entity-place');
+    let entityPosition = entity.getAttribute('gps-projected-entity-place');
+    let lngDelta = conePosition.longitude - entityPosition.longitude;
+    let latDelta = conePosition.latitude - entityPosition.latitude;
+    let angle = calculateAngle(lngDelta, latDelta);
+    entity.setAttribute('rotation', {
+       x: 90,
+       y: angle,
+       z: 0
+    });
+  } else {
+     alert("cone was null :(");
+  }*
+}
+
 AFRAME.registerComponent('peakfinder', {
     init: function() {
         this.loaded = false;
@@ -18,50 +40,56 @@ AFRAME.registerComponent('peakfinder', {
     },
     _loadPeaks: function(longitude, latitude) {
         //alert("Load Peaks");
-       const scale = 200;
+       const scale = 5;
        fetch("../routeData.json")
        .then(response => {
           return response.json();
        })
        .then ( json => {
+          let cone = null;
+
          json.features.forEach(feature => {
-           let cone = null;
            let entity = document.createElement('a-cone');
-           /*entity.setAttribute('color', 'blue');
-           entity.setAttribute('radius-bottom', 2);
-           entity.setAttribute('radius-top', 0.5);
-           entity.setAttribute('height', 1); */
            if (feature.geometry.type === "Point") {
              console.log("Point")
-             console.log(feature.geometry.coordinates[0]);
+             //console.log(feature.geometry.coordinates[0]);
              //entity.setAttribute('look-at', '[gps-projected-camera]');
              //entity.setAttribute('value', json[key].properties.name);
-             entity.setAttribute('scale', {
+
+              entity.setAttribute('scale', {
                  x: scale,
                  y: scale,
                  z: scale
              });
+
              entity.setAttribute('gps-projected-entity-place', {
-                 latitude: feature.geometry.coordinates[0][0],
-                 longitude: feature.geometry.coordinates[0][1]
+                 latitude: feature.geometry.coordinates[1],
+                 longitude: feature.geometry.coordinates[0]
              });
-           }
-           else {
+             setRotation(cone, entity);
+
+           } else {
              console.log("Not Point")
-             console.log(feature.geometry.coordinates[0]);
-             //entity.setAttribute('look-at', '[gps-projected-camera]');
-             //entity.setAttribute('value', json[key].properties.name);
-             entity.setAttribute('scale', {
-                 x: scale,
-                 y: scale,
-                 z: scale
-             });
-             entity.setAttribute('gps-projected-entity-place', {
-                 latitude: feature.geometry.coordinates[0][0][0],
-                 longitude: feature.geometry.coordinates[0][0][1]
-             });
+             let x = 0
+             feature.geometry.coordinates.forEach(coordinates => {
+               entity.setAttribute('scale', {
+                   x: scale,
+                   y: scale,
+                   z: scale
+               });
+               entity.setAttribute('gps-projected-entity-place', {
+                   latitude: feature.geometry.coordinates[x][1],
+                   longitude: feature.geometry.coordinates[x][0]
+               });
+
+               this.el.appendChild(entity);
+               x = x + 1
+               entity = document.createElement('a-cone');
+             })
            }
+           /*
            if(cone != null) {
+             alert("cone was not null :)");
              let conePosition = cone.getAttribute('gps-projected-entity-place');
              let entityPosition = entity.getAttribute('gps-projected-entity-place');
              let lngDelta = conePosition.longitude - entityPosition.longitude;
@@ -69,17 +97,19 @@ AFRAME.registerComponent('peakfinder', {
              let angle = calculateAngle(lngDelta, latDelta);
              cone.setAttribute('rotation', {
                 x: 90,
-                y: 0,
-                z: angle
+                y: angle,
+                z: 0
              });
-           }
+           } else {
+              alert("cone was null :(");
+           }*/
            cone = entity;
            this.el.appendChild(entity);
            //alert("Apparently Done")
            console.log(feature.geometry.coordinates[0]);
 
          })
-         alert("foreach Done")
+         //alert("foreach Done")
          /*
         for (const key in json){
             if(json.hasOwnProperty(key)){
