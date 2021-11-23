@@ -68,7 +68,7 @@ AFRAME.registerComponent('peakfinder', {
              let latDelta = conePosition.latitude - entityPosition.latitude;
              let angle = calculateAngle(lngDelta, latDelta);
              cone.setAttribute('rotation', {
-                x: 0,
+                x: 90,
                 y: 0,
                 z: angle
              });
