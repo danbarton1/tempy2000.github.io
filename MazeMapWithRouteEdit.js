@@ -18,7 +18,7 @@ AFRAME.registerComponent('peakfinder', {
     },
     _loadPeaks: function(longitude, latitude) {
         //alert("Load Peaks");
-       const scale = 20000;
+       const scale = 200;
        fetch("../routeData.json")
        .then(response => {
           return response.json();
@@ -26,10 +26,14 @@ AFRAME.registerComponent('peakfinder', {
        .then ( json => {
          json.features.forEach(feature => {
            let cone = null;
-           const entity = document.createElement('a-cone');
+           let entity = document.createElement('a-cone');
+           entity.setAttribute('color', 'blue');
+           entity.setAttribute('radius-bottom', 2);
+           entity.setAttribute('radius-top', 0.5);
+           entity.setAttribute('height', 1);
            if (feature.geometry.type === "Point") {
              console.log("Point")
-             //console.log(feature.geometry.coordinates[0]);
+             console.log(feature.geometry.coordinates[0]);
              //entity.setAttribute('look-at', '[gps-projected-camera]');
              //entity.setAttribute('value', json[key].properties.name);
              entity.setAttribute('scale', {
@@ -38,14 +42,13 @@ AFRAME.registerComponent('peakfinder', {
                  z: scale
              });
              entity.setAttribute('gps-projected-entity-place', {
-                 latitude: feature.geometry.coordinates[1],
-                 longitude: feature.geometry.coordinates[0]
+                 latitude: feature.geometry.coordinates[0][0],
+                 longitude: feature.geometry.coordinates[0][1]
              });
-
            }
            else {
              console.log("Not Point")
-             //console.log(feature.geometry.coordinates[0]);
+             console.log(feature.geometry.coordinates[0]);
              //entity.setAttribute('look-at', '[gps-projected-camera]');
              //entity.setAttribute('value', json[key].properties.name);
              entity.setAttribute('scale', {
@@ -54,8 +57,8 @@ AFRAME.registerComponent('peakfinder', {
                  z: scale
              });
              entity.setAttribute('gps-projected-entity-place', {
-                 latitude: feature.geometry.coordinates[0][1],
-                 longitude: feature.geometry.coordinates[0][0]
+                 latitude: feature.geometry.coordinates[0][0][0],
+                 longitude: feature.geometry.coordinates[0][0][1]
              });
            }
            if(cone != null) {
