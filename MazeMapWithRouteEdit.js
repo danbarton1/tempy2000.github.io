@@ -27,10 +27,10 @@ AFRAME.registerComponent('peakfinder', {
          json.features.forEach(feature => {
            let cone = null;
            let entity = document.createElement('a-cone');
-           entity.setAttribute('color', 'blue');
+           /*entity.setAttribute('color', 'blue');
            entity.setAttribute('radius-bottom', 2);
            entity.setAttribute('radius-top', 0.5);
-           entity.setAttribute('height', 1);
+           entity.setAttribute('height', 1); */
            if (feature.geometry.type === "Point") {
              console.log("Point")
              console.log(feature.geometry.coordinates[0]);
