@@ -58,6 +58,7 @@ AFRAME.registerComponent('peakfinder', {
 
 		var cones = document.getElementsByTagName("a-cone");
 		cones = Array.prototype.slice.call(cones);
+		console.log(cones);
 
 		let lastCone = null;
 
