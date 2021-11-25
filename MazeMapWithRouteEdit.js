@@ -24,7 +24,48 @@ AFRAME.registerComponent('peakfinder', {
 		return response.json();
 	})
 	.then ( json => {
-		const points = [];
+		json.features.forEach(feature => {
+			let entity = document.createElement('a-cone');
+			if (feature.geometry.type === "Point") {
+			  console.log("Point")
+ 
+			   entity.setAttribute('scale', {
+				  x: scale,
+				  y: scale,
+				  z: scale
+			  });
+			  entity.setAttribute('gps-projected-entity-place', {
+				  latitude: feature.geometry.coordinates[1],
+				  longitude: feature.geometry.coordinates[0]
+			  });
+ 
+			  //child = this._editRotation(entity, previousEntity)
+			  this.el.appendChild(entity);
+			  previousEntity = entity
+			} else {
+			  console.log("Not Point")
+			  let x = 0
+			  feature.geometry.coordinates.forEach(coordinates => {
+				entity.setAttribute('scale', {
+					x: scale,
+					y: scale,
+					z: scale
+				});
+				entity.setAttribute('gps-projected-entity-place', {
+					latitude: feature.geometry.coordinates[x][1],
+					longitude: feature.geometry.coordinates[x][0]
+				});
+ 
+				//child = this._editRotation(entity, previousEntity)
+				this.el.appendChild(entity);
+				previousEntity = entity
+				x = x + 1
+			   entity = document.createElement('a-cone');
+			  }) 
+			}
+			//cone = entity;
+		  })
+		/*const points = [];
 		
 		// Get each element and put it into a list
 		json.features.forEach(feature => {
@@ -80,7 +121,7 @@ AFRAME.registerComponent('peakfinder', {
 				console.log(cone);
 			}
 			lastCone = cone;      
-		});
+		});*/
 
 		/*
          json.features.forEach(feature => {
