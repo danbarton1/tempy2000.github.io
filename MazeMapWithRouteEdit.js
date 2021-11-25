@@ -24,12 +24,11 @@ AFRAME.registerComponent('peakfinder', {
 		return response.json();
 	})
 	.then ( json => {
-		let previousEntity = null;
-		let child = null;
 		const points = [];
 		
 		// Get each element and put it into a list
 		json.features.forEach(feature => {
+			console.log("Adding to list")
 			if (feature.geometry.type === "Point") {
 				points.push(feature.geometry.coordinates);
 			}
@@ -42,6 +41,7 @@ AFRAME.registerComponent('peakfinder', {
 
 		// Create the cones
 		points.forEach(coordinates => {
+			console.log("Creating cone")
 			let entity = document.createElement('a-cone');
 			entity.setAttribute('scale', {
 				x: scale,
@@ -61,6 +61,7 @@ AFRAME.registerComponent('peakfinder', {
 
 		// Set the rotation of the cones
 		cones.forEach(cone => {
+			console.log("Setting rotation")
 			if (lastCone !== null) {
 				let lastConePosition = lastCone.getAttribute('gps-projected-entity-place');
 				let currentConePosition = cone.getAttribute('gps-projected-entity-place');
