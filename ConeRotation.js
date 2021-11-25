@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function(e) {
-    var cones = document.getElementsByTagName("a-cone");
+    /*var cones = document.getElementsByTagName("a-cone");
     cones = Array.prototype.slice.call(cones);
 
     let lastCone = null;
@@ -18,5 +18,25 @@ document.addEventListener("DOMContentLoaded", function(e) {
             console.log(cone);
         }
         lastCone = cone;      
+    });*/
+    fetch("../routeData.json")
+	.then(response => {
+		return response.json();
+	})
+	.then ( json => {
+		let previousEntity = null;
+		let child = null;
+		const points = [];
+		json.features.forEach(feature => {
+			if (feature.geometry.type === "Point") {
+				points.push(feature.geometry.coordinates);
+			}
+			else {
+				feature.geometry.coordinates.forEach(coordinates => {
+					points.push(coordinates);
+				});
+			}
+		});
+        console.log(points);
     });
   });

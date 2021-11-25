@@ -5,27 +5,78 @@ fetch("../routeData.json")
 .then(jsondata => console.log(jsondata));
 
 AFRAME.registerComponent('peakfinder', {
-    init: function() {
-        this.loaded = false;
-        //alert(this.loaded);
-        window.addEventListener('gps-camera-update-position', e => {
-            if(this.loaded === false) {
-                //alert("Running");
-                this._loadPeaks(e.detail.position.longitude, e.detail.position.latitude);
-                this.loaded = true;
-            }
-        });
-    },
-    _loadPeaks: function(longitude, latitude) {
-        //alert("Load Peaks");
-       const scale = 5;
-       fetch("../routeData.json")
-       .then(response => {
-          return response.json();
-       })
-       .then ( json => {
-          let previousEntity = null;
-          let child = null;
+	init: function() {
+		this.loaded = false;
+		//alert(this.loaded);
+		window.addEventListener('gps-camera-update-position', e => {
+			if(this.loaded === false) {
+				//alert("Running");
+				this._loadPeaks(e.detail.position.longitude, e.detail.position.latitude);
+				this.loaded = true;
+			}
+		});
+	},
+	_loadPeaks: function(longitude, latitude) {
+		//alert("Load Peaks");
+	const scale = 5;
+	fetch("../routeData.json")
+	.then(response => {
+		return response.json();
+	})
+	.then ( json => {
+		let previousEntity = null;
+		let child = null;
+		const points = [];
+		
+		// Get each element and put it into a list
+		json.features.forEach(feature => {
+			if (feature.geometry.type === "Point") {
+				points.push(feature.geometry.coordinates);
+			}
+			else {
+				feature.geometry.coordinates.forEach(coordinates => {
+					points.push(coordinates);
+				});
+			}
+		});
+
+		// Create the cones
+		points.forEach(coordinates => {
+			let entity = document.createElement('a-cone');
+			entity.setAttribute('scale', {
+				x: scale,
+				y: scale,
+				z: scale
+			});
+			entity.setAttribute('gps-projected-entity-place', {
+				latitude: coordinates[1],
+				longitude: coordinates[0]
+			});
+		});
+
+		var cones = document.getElementsByTagName("a-cone");
+		cones = Array.prototype.slice.call(cones);
+
+		let lastCone = null;
+
+		// Set the rotation of the cones
+		cones.forEach(cone => {
+			if (lastCone !== null) {
+				let lastConePosition = lastCone.getAttribute('gps-projected-entity-place');
+				let currentConePosition = cone.getAttribute('gps-projected-entity-place');
+				const lngDelta = lastConePosition.longitude - currentConePosition.longitude; 
+				const latDelta = lastConePosition.latitude - currentConePosition.latitude;
+				let angle = Math.atan2(zDelta, latDelta) * 180 / Math.PI;
+				console.log(lngDelta);
+				console.log(latDelta);
+				console.log(angle);
+				cone.setAttribute("rotation", "0 " + -angle + " 90");
+				console.log(cone);
+			}
+			lastCone = cone;      
+		});
+
+		/*
          json.features.forEach(feature => {
            let entity = document.createElement('a-cone');
            if (feature.geometry.type === "Point") {
@@ -63,10 +114,10 @@ AFRAME.registerComponent('peakfinder', {
                previousEntity = entity
                x = x + 1
               entity = document.createElement('a-cone');
-             })
+             }) 
            }
            //cone = entity;
-         })
+         }) */
        });
    },
    _editRotation: function(entity, previousEntity) {
