@@ -64,7 +64,10 @@ AFRAME.registerComponent('peakfinder', {
 			  }) 
 			}
 			//cone = entity;
-		  })
+		})
+		var cones = document.getElementsByTagName("a-cone");
+		cones = Array.prototype.slice.call(cones);
+		console.log(cones);
 		/*const points = [];
 		
 		// Get each element and put it into a list
