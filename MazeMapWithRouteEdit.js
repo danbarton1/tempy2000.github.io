@@ -28,12 +28,13 @@ AFRAME.registerComponent('peakfinder', {
 		
 		// Get each element and put it into a list
 		json.features.forEach(feature => {
-			console.log("Adding to list")
 			if (feature.geometry.type === "Point") {
+				console.log("Adding to list")
 				points.push(feature.geometry.coordinates);
 			}
 			else {
 				feature.geometry.coordinates.forEach(coordinates => {
+					console.log("Adding to list")
 					points.push(coordinates);
 				});
 			}
@@ -41,7 +42,7 @@ AFRAME.registerComponent('peakfinder', {
 
 		// Create the cones
 		points.forEach(coordinates => {
-			console.log("Creating cone")
+			console.log("Creating cone: " + coordinates);
 			let entity = document.createElement('a-cone');
 			entity.setAttribute('scale', {
 				x: scale,
