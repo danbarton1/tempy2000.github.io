@@ -52,6 +52,7 @@ AFRAME.registerComponent('peakfinder', {
 				latitude: coordinates[1],
 				longitude: coordinates[0]
 			});
+			this.el.appendChild(entity);
 		});
 
 		var cones = document.getElementsByTagName("a-cone");
