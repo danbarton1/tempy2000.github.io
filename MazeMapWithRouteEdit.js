@@ -53,7 +53,6 @@ AFRAME.registerComponent('peakfinder', {
 				latitude: coordinates[1],
 				longitude: coordinates[0]
 			});
-			console.log("Created entity: " + entity.getAttribute('gps-projected-entity-place'));
 			this.el.appendChild(entity);
 		});
 
