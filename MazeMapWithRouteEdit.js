@@ -24,71 +24,6 @@ AFRAME.registerComponent('peakfinder', {
 		return response.json();
 	})
 	.then ( json => {
-		json.features.forEach(feature => {
-			let entity = document.createElement('a-cone');
-			if (feature.geometry.type === "Point") {
-			  console.log("Point")
- 
-			   entity.setAttribute('scale', {
-				  x: scale,
-				  y: scale,
-				  z: scale
-			  });
-			  entity.setAttribute('gps-projected-entity-place', {
-				  latitude: feature.geometry.coordinates[1],
-				  longitude: feature.geometry.coordinates[0]
-			  });
- 
-			  //child = this._editRotation(entity, previousEntity)
-			  this.el.appendChild(entity);
-			} else {
-			  console.log("Not Point")
-			  let x = 0
-			  feature.geometry.coordinates.forEach(coordinates => {
-				entity.setAttribute('scale', {
-					x: scale, 
-					y: scale,
-					z: scale
-				});
-				entity.setAttribute('gps-projected-entity-place', {
-					latitude: feature.geometry.coordinates[x][1],
-					longitude: feature.geometry.coordinates[x][0]
-				});
- 
-				//child = this._editRotation(entity, previousEntity)
-				this.el.appendChild(entity);
-				x = x + 1
-			   entity = document.createElement('a-cone');
-			  }) 
-			}
-			//cone = entity;
-		})
-		var cones = document.getElementsByTagName("a-cone");
-		cones = Array.prototype.slice.call(cones);
-		console.log(cones);
-
-		let lastCone = null;
-
-		// Set the rotation of the cones
-		cones.forEach(cone => {
-			console.log("Setting rotation")
-			if (lastCone !== null) {
-				let lastConePosition = lastCone.getAttribute('gps-projected-entity-place');
-				let currentConePosition = cone.getAttribute('gps-projected-entity-place');
-				console.log(lastCone + " pos: " + lastConePosition);
-				console.log(cone + " pos: " + currentConePosition);
-				const lngDelta = lastConePosition.longitude - currentConePosition.longitude; 
-				const latDelta = lastConePosition.latitude - currentConePosition.latitude;
-				let angle = Math.atan2(zDelta, latDelta) * 180 / Math.PI;
-				console.log(lngDelta);
-				console.log(latDelta);
-				console.log(angle);
-				cone.setAttribute("rotation", "0 " + -angle + " 90");
-				console.log(cone);
-			}
-			lastCone = cone;      
-		});
-
 		/*const points = [];
 		
 		// Get each element and put it into a list
@@ -146,8 +81,6 @@ AFRAME.registerComponent('peakfinder', {
 			}
 			lastCone = cone;      
 		});*/
-
-		/*
          json.features.forEach(feature => {
            let entity = document.createElement('a-cone');
            if (feature.geometry.type === "Point") {
@@ -188,25 +121,24 @@ AFRAME.registerComponent('peakfinder', {
              }) 
            }
            //cone = entity;
-         }) */
+         }) 
        });
    },
    _editRotation: function(entity, previousEntity) {
      if (previousEntity != null) {
-       let cone = previousEntity
+		let cone = previousEntity
 
-       let conePosition = cone.getAttribute('gps-projected-entity-place');
-       let entityPosition = entity.getAttribute('gps-projected-entity-place');
-       let lngDelta = conePosition.longitude - entityPosition.longitude;
-       let latDelta = conePosition.latitude - entityPosition.latitude;
-       let angle = Math.atan2(latDelta, lngDelta) * 180 / Math.PI;
-
-       cone.object3D.rotation.set(
-          THREE.Math.degToRad(0),
-          THREE.Math.degToRad(-angle),
-          THREE.Math.degToRad(90)
-        );
-        return cone;
+		let conePosition = cone.getAttribute('gps-projected-entity-place');
+		let entityPosition = entity.getAttribute('gps-projected-entity-place');
+		const lngDelta = conePosition.longitude - entityPosition.longitude; 
+		const latDelta = conePosition.latitude - entityPosition.latitude;
+		let angle = Math.atan2(zDelta, latDelta) * 180 / Math.PI;
+		console.log(lngDelta);
+		console.log(latDelta);
+		console.log(angle);
+		cone.setAttribute("rotation", "0 " + -angle + " 90");
+		console.log(cone);
+		return cone;
       }
       else {
         return entity;
